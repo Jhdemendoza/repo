@@ -2,8 +2,6 @@
 
 import os
 
-os.chdir('./AppServer')
-
 os.system('sudo cp ./startServer.py /var/lib/lxc/s1/rootfs/root')
 os.system('sudo lxc-attach -n s1 -- python /root/startServer.py S1')
 
