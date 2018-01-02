@@ -5,6 +5,7 @@ import sys
 from subprocess import call
 
 def create():
+	os.system('cp /home/cdps/pfinal/pfinal.xml ./pfinal_backup.xml')
 	if arg2 == 3:
 		os.system('/home/cdps/pfinal/bin/prepare-pfinal-vm')
 		os.system('vnx -f /home/cdps/pfinal/pfinal.xml --create')
@@ -12,21 +13,23 @@ def create():
 		fileServ.write("3")
 		fileServ.close()
 	else:
-		fileWrite = open('/tmp/plantilla.xml', 'w')
-		fileRead = open('/home/cdps/pfinal/pfinal.xml', 'r')
 		for i in range(arg2-3):
 			j = i+1
 			index = str(j+3)
 			indexAux = str(j+2)
+			print("i: ", i, "j: ", j, "index: ", index, "index_aux: ", indexAux)
+			fileWrite = open('./pfinal_aux.xml', 'w')
+			fileRead = open('/home/cdps/pfinal/pfinal.xml', 'r')
 			for line in fileRead:
 				if '<ipv4>10.1.4.1'+indexAux+'/24</ipv4>' in line:
 					fileWrite.write(line)
-					fileWrite.write('</if>\n<if id="9" net="virbr0">\n<ipv4>dhcp</ipv4>\n</if>\n<route type="ipv4" gw="10.1.3.1">10.1.0.0/16</route>\n<exec seq="on_boot" type="verbatim">\nmknod -m 666 /dev/fuse c 10 229;\n</exec>\n</vm>\n\n<vm name="s4" type="lxc" arch="x86_64">\n<filesystem type="cow">filesystems/rootfs_lxc64-cdps</filesystem>\n<if id="1" net="LAN3">\n<ipv4>10.1.3.1'+index+'/24</ipv4>\n</if>\n<if id="2" net="LAN4">\n<ipv4>10.1.4.1'+index+'/24</ipv4>')
+					fileWrite.write('</if>\n<if id="9" net="virbr0">\n<ipv4>dhcp</ipv4>\n</if>\n<route type="ipv4" gw="10.1.3.1">10.1.0.0/16</route>\n<exec seq="on_boot" type="verbatim">\nmknod -m 666 /dev/fuse c 10 229;\n</exec>\n</vm>\n\n<vm name="s'+str(index)+'" type="lxc" arch="x86_64">\n<filesystem type="cow">filesystems/rootfs_lxc64-cdps</filesystem>\n<if id="1" net="LAN3">\n<ipv4>10.1.3.1'+index+'/24</ipv4>\n</if>\n<if id="2" net="LAN4">\n<ipv4>10.1.4.1'+index+'/24</ipv4>\n')
 				else:
 					fileWrite.write(line)
-		fileRead.close()
-		fileWrite.close()
-		os.system('cp /tmp/plantilla.xml /home/cdps/pfinal/pfinal.xml')
+			fileRead.close()
+			fileWrite.close()
+			os.system('cp ./pfinal_aux.xml /home/cdps/pfinal/pfinal.xml')
+			os.system('rm ./pfinal_aux.xml -f')
 		fileServ = open('./nServ.txt', 'w')
 		fileServ.write(str(arg2))
 		fileServ.close()
@@ -110,6 +113,11 @@ def help():
 	print('Arrancar el servicio CRM: sudo python installPfinal.py runCRM\n')
 	print('Configurar y arrancar el balanceador de carga: sudo python installPfinal.py lb\n')
 
+def destroy():
+	os.system('rm ./nServ.txt -f')
+	os.system('sudo vnx -f /home/cdps/pfinal/pfinal.xml --destroy')
+	os.system('cp ./pfinal_backup.xml /home/cdps/pfinal/pfinal.xml')
+
 
 if (len(sys.argv) > 1):
 	arg1 = sys.argv[1]
@@ -141,6 +149,15 @@ elif arg1 == "doItAll":
 	setCRM()
 	runCRM()
 	lb()
+elif arg1 == "doTheRest":
+	firewall()
+	bbdd()
+	cluster()
+	setCRM()
+	runCRM()
+	lb()
+elif arg1 == "destroy":
+	destroy()
 else:
 	help()
 
