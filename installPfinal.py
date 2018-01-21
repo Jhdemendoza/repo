@@ -103,11 +103,11 @@ def lb():
 
 	os.system(balan)
 	print('Balanceador de carga configurado y funcionando!!\n\n')
-        print('Abra un nuevo terminal si necesita conectarse a alguna de las máquinas o si quiere destruir el escenario\n')
+        print('Abra un nuevo terminal si necesita conectarse a alguna de las maquinas o si quiere destruir el escenario\n')
 
 def help():
         print('Configurar y arrancar todo: sudo python installPfinal.py doItAll\n')
-        print('Configurar un número de servidores mayor que 3: sudo python installPfinal.py create [nServ]\n')
+        print('Configurar un numero de servidores mayor que 3: sudo python installPfinal.py create [nServ]\n')
         print('Terminar de configurar y arrancar el escenario: sudo python installPfinal.py doTheRest\n')
 	print('Configurar escenario (MVs): sudo python installPfinal.py create\n')
 	print('Configurar firewall: sudo python installPfinal.py firewall\n')
